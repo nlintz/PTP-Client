@@ -5,7 +5,14 @@ var PTPClient = require('./lib/ptp_client.js'),
     CommandExecutor = require('./lib/command_executor.js'),
     Commands = require('./lib/command_builder.js'),
     configWriter = require('./lib/config_writer.js'),
-    cli = require('cli').setUsage('PTP run/gitdeploy/sshdeploy <Path To Script Relative To Project Directory>'),
+    cli = require('cli').setUsage('PTP run <Path to file> [options...]' + 
+      '\n      Runs the selected file on PTP' +
+      '\n  PTP sshdeploy <Project Directory> [options...]' +
+      '\n      Deploys the selected project to PTP over SSH' +
+      '\n  PTP gitdeploy <git repo> [options...]' + 
+      '\n      Deploys the selected project to PTP over github' +
+      '\n  PTP config' +
+      '\n      Sets the config settings for PTP' ),
     options = cli.parse({
       verbose: ['v', 'verbose'],
     });
@@ -36,7 +43,6 @@ cli.main(function (args, options) {
       var re = new RegExp("([^\/]*\/+)(.*)");
       var scriptPath = args[1];
       var localDirectory = scriptPath.match(re)[1]
-      var scriptPath = scriptPath.match(re)[2]
 
       ptpClient.send(localDirectory, config.projectArchive, function () {
         ptpClient.shell(Commands.sshDeploy(localDirectory, config.projectArchive, config.remoteDirectory, scriptPath), {verbose:options.verbose})
