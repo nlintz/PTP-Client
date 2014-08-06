@@ -1,6 +1,6 @@
 {
   "name": "ptp-client",
-  "version": "0.0.0",
+  "version": "0.0.1",
   "description": "",
   "main": "index.js",
   "scripts": {
@@ -16,8 +16,8 @@
     "tar": "^1.0.0"
   },
   "repository": {
-  "type": "git",
-  "url": "git://github.com/nlintz/PTP-Client.git"
+    "type": "git",
+    "url": "git://github.com/nlintz/PTP-Client.git"
   },
   "bin": {
     "PTP": "index.js"
