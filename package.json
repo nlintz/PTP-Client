@@ -1,0 +1,21 @@
+{
+  "name": "ptp-client",
+  "version": "0.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "author": "",
+  "license": "ISC",
+  "dependencies": {
+    "cli": "^0.6.3",
+    "fstream": "^1.0.1",
+    "scp2": "^0.1.4",
+    "ssh2": "^0.3.4",
+    "tar": "^1.0.0"
+  },
+  "bin": {
+    "PTP": "index.js"
+  }
+}
