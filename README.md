@@ -15,25 +15,20 @@ npm -g rm ptp-client
 
 ###Getting started
 ####Preparing module for PTP
-To configure an existing tessel module to run on the PTP, you'll need to make some small modifications to the driver. You will have to update the package.json to use ptp-tessel, update any files that reference tessel to use ptp-tessel, and you will need to modify any code which runs on tessel but does not run on V8. We will now modify the [ble-ble113a](https://github.com/tessel/ble-ble113a) module to run on PTP.
+To configure an existing tessel module to run on the PTP, you'll need to make some small modifications to your module code. I went ahead and made a BLE example advertisement project which uses the Portable Tessel Platform. 
 
-First, download the module
+First, download the example project
 ```sh
-git clone https://github.com/tessel/ble-ble113a.git && cd ble-ble113a
+git clone https://github.com/nlintz/PTP-modules-ble-advertise
 ```
 
-Next, open up the module. Lets start by modifying the package.json file so the dependencies section by replacing tessel with ptp-tessel. It should now look like this
+The only differences between this project and your typical tessel project is in the package.json. Instead of requiring 'tessel' you need to require 'ptp-tessel'. In addition, you need to add a line to the "scripts" section of the package.json specifying which script you want to run on the board. Since my script was called index.js, my package.json's scripts attribute looks like this:
+
 ```json
-"dependencies": {
-    "bglib" : "^0.0.6",
-    "async" : "^0.9.0",
-    "ptp-tessel" : "*"
-  },
+"scripts" : {
+  "start": "sudo node index.js"
+}
 ```
-
-Modify ble-dfu.js and ble-advertise.js my replacing ```require('tessel')``` with ```require('ptp-tessel')``` and run npm install.
-
-We're all done modifying the module to run on PTP. Now we just need to setup ssh to deploy and run scripts to the board.
 
 ####Setup SSH Keys
 You need to setup a public ssh key to send commands to the PTP. Since you're using github, its likely that you already have ssh keys setup. If not go [here](https://www.digitalocean.com/community/tutorials/how-to-set-up-ssh-keys--2) to learn how to setup your public ssh key. 
@@ -63,20 +58,23 @@ It will prompt you for the following information:
 ####Deploy and Run
 Now that we have a script ready to deploy and we have our ssh keys setup we can easily deploy our project using the PTP client.
 
-First make sure you are in a parent directory of where you cloned the ble module. For example, if the ble module was cloned to ~/Desktop, cd into ~/Desktop. Now run 
-```sh
-PTP sshdeploy ble-ble113a/ -v
-```
-The v flag stands for verbose. It will let us see the output of the PTP client as it deploys our code. Now that our code is on the board, its easy to run. Type
-```sh
-PTP run ble-ble113a/examples/ble-advertise.js -v
-```
-This will run the ble-advertise example script, again with the verbose flag set so we can see the stdout on the board as the code runs.
-
-Congratulations, you have PTP setup and you're ready to go. If you hate deploying code over ssh for some reason and would rather use git, its no problem. Instead of using the sshdeploy command you can run
+First make sure you are in a parent directory of your project directory. For example, if you cloned the ble-advertisement example to ~/Desktop, cd into ~/Desktop. Now run:
 
 ```sh
-PTP gitdeploy <git clone url> -v
+PTP deploy <Project Directory Name>/ -v
+```
+The v flag stands for verbose. It will let us see the output of the PTP client as it deploys our code. If you are using the ble example, you would have written the command.
+
+```sh
+PTP deploy <Project Directory Name>/ -v
+```
+
+You should be seeing your project load onto your Tessel now. After its done loading, it will run the script you specified in your package.json.
+
+Congratulations, you have PTP setup and you're ready to go. If you hate deploying code over ssh for some reason and would rather use git, it's no problem. Instead of deploying over ssh, you can instead run
+
+```sh
+PTP deploy <git clone url> -v
 ``` 
 
-If we wanted to run the ambient-attx module, for example, we would run PTP gitdeploy https://github.com/tessel/ambient-attx4.git -v.
+If we wanted to run the ble example project, you could run ```PTP deploy https://github.com/nlintz/PTP-modules-ble-advertise.git``` -v .
