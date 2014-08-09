@@ -28,34 +28,46 @@ cli.main(function (args, options) {
         scpConn = new SCPConnection(config.host, config.username, config.password, config.remoteDirectory),
         commandExecutor = new CommandExecutor(config.host, config.username, config.sshPub);
 
-    if (args[0] == "run") {
-      var ptpClient = new PTPClient(scpConn, commandExecutor);
-      var re = new RegExp("([^\/]*\/+)(.*)");
-      var scriptPath = args[1];
-      var localDirectory = scriptPath.match(re)[1]
-      var scriptPath = scriptPath.match(re)[2]
-      
-      ptpClient.shell(Commands.runScript(localDirectory, config.remoteDirectory, scriptPath), {verbose:options.verbose})
+    function run (localDirectory) {
+      var ptpClient = new PTPClient(scpConn, commandExecutor);      
+      ptpClient.shell(Commands.runScript(config.remoteDirectory), {verbose:options.verbose})
     }
 
-    else if (args[0] == "sshdeploy") {
+    function deploySSH(localDirectory) {
       var ptpClient = new PTPClient(scpConn, commandExecutor);
-      var re = new RegExp("([^\/]*\/+)(.*)");
-      var scriptPath = args[1];
-      var localDirectory = scriptPath.match(re)[1]
 
       ptpClient.send(localDirectory, config.projectArchive, function () {
-        ptpClient.shell(Commands.sshDeploy(localDirectory, config.projectArchive, config.remoteDirectory, scriptPath), {verbose:options.verbose})
+        ptpClient.shell(Commands.sshDeploy(localDirectory, config.projectArchive, config.remoteDirectory), 
+          {verbose:options.verbose}, run.bind(null, config.remoteDirectory))
       })
     }
 
     // You can also deploy with git
-    else if (args[0] == "gitdeploy") {
+    function deployGit(giturl, repo) {
       var ptpClient = new PTPClient(null, commandExecutor);
       var re = new RegExp(".*\/(.*).git$")
       var giturl = args[1];
       var repo = giturl.match(re)[1];
-      var deploy = ptpClient.shell(Commands.gitDeploy(giturl, repo, config.remoteDirectory), {verbose:options.verbose});
+      ptpClient.shell(Commands.gitDeploy(giturl, repo, config.remoteDirectory), 
+        {verbose:options.verbose}, run.bind(null, config.remoteDirectory));
+    }
+
+    if (args[0] == "deploy") {
+      var gitRegex = new RegExp(".*\/(.*).git$");
+      var sshRegex = new RegExp("([^\/]*\/+)(.*)");
+      var project = args[1];
+
+      if (project.match(gitRegex)) {
+        var repo = project.match(gitRegex)[1];
+        deployGit(project, repo);
+      } else {
+        var localDirectory = project.match(sshRegex)[1];
+        deploySSH(localDirectory)
+      }
+    }
+
+    else if (args[0] == "restart") {
+      run(config.remoteDirectory);
     }
   }
 });

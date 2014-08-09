@@ -31,11 +31,7 @@ Next, open up the module. Lets start by modifying the package.json file so the d
   },
 ```
 
-Modify ble-dfu.js and ble-advertise.js my replacing ```require('tessel')``` with ```require('ptp-tessel')```.
-
-We're almost ready to go. Open up messenger.js and go to line 336. It should look like ```if (bArray.length != numSent) {```. Replace this line with ```if (false) {```. 
-
-Finally, open index.js and go to line 82. It should look like ```});```. Replace this line with ```}.bind(this));```.
+Modify ble-dfu.js and ble-advertise.js my replacing ```require('tessel')``` with ```require('ptp-tessel')``` and run npm install.
 
 We're all done modifying the module to run on PTP. Now we just need to setup ssh to deploy and run scripts to the board.
 
