@@ -63,10 +63,11 @@ First make sure you are in a parent directory of your project directory. For exa
 ```sh
 PTP deploy <Project Directory Name>/ -v
 ```
+
 The v flag stands for verbose. It will let us see the output of the PTP client as it deploys our code. If you are using the ble example, you would have written the command.
 
 ```sh
-PTP deploy <Project Directory Name>/ -v
+PTP deploy PTP-modules-ble-advertise/ -v
 ```
 
 You should be seeing your project load onto your Tessel now. After its done loading, it will run the script you specified in your package.json.
@@ -78,3 +79,9 @@ PTP deploy <git clone url> -v
 ``` 
 
 If we wanted to run the ble example project, you could run ```PTP deploy https://github.com/nlintz/PTP-modules-ble-advertise.git``` -v .
+
+Once you have your project deployed to your board, you can restart the program without uploading your code again by running:
+
+```
+PTP restart -v
+```
